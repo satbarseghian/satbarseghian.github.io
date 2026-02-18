@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sat Barseghyan</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="homeGlowCursor" id="homeGlowCursor" aria-hidden="true"></div>
+  <main class="home">
+    <div class="wrap homeWrap">
+      <a class="name" href="projects.html">
+        SAT<br/>BARSEGHYAN
+      </a>
+
+      <p class="bio">
+        I’m a senior at St. Olaf College studying Computer Science, with interests in data science, film, and UI/UX.
+        I build clean, story-driven work across software, data, and visuals.
+      </p>
+
+      <div class="hint">Click my name to view selected projects.</div>
+    </div>
+  </main>
+  <script>
+    const glow = document.getElementById("homeGlowCursor");
+  
+    function moveGlow(e){
+      glow.style.left = e.clientX + "px";
+      glow.style.top  = e.clientY + "px";
+      glow.style.opacity = "1";
+    }
+  
+    window.addEventListener("mousemove", moveGlow);
+  
+    // Optional: press Enter to go to projects
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") window.location.href = "projects.html";
+    });
+  
+    // Hide glow on touch devices
+    if ("ontouchstart" in window) {
+      glow.style.display = "none";
+      window.removeEventListener("mousemove", moveGlow);
+    }
+  </script>  
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="index.html">← Home</a>
+
+      <nav class="tabs" aria-label="Portfolio sections">
+        <button class="tab is-active" type="button" data-tab="software">Software</button>
+        <button class="tab" type="button" data-tab="data">Data</button>
+        <button class="tab" type="button" data-tab="uiux">UI/UX</button>
+        <button class="tab" type="button" data-tab="hobbies">Film/Photo</button>
+        <button class="tab" type="button" data-tab="resume">Resume</button>
+      </nav>
+
+      <div class="topbarRight">
+        <span class="topbarHint">Click or use ↑ ↓</span>
+      </div>
+    </header>
+
+    <main class="projectsGrid">
+      <!-- LEFT: list -->
+      <aside class="panel leftPanel" id="projectList"></aside>
+
+      <!-- RIGHT: viewer -->
+      <section class="panel rightPanel" id="projectView" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <script src="projects.js"></script>
+</body>
+</html>
