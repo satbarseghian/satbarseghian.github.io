@@ -337,8 +337,9 @@ summary{
   
   /* animate the entrance of the home content */
   .home .wrap{
-    animation: fadeUp 520ms ease both;
-  }
+    position: relative; z-index: 2; }
+
+  
   
   /* slightly stagger elements 
   .home .name{ animation: fadeUp 520ms ease both, floatSoft 6s ease-in-out infinite; animation-delay: 40ms; }
@@ -382,4 +383,28 @@ summary{
     z-index: 0; /* behind content */
   }
   
-  
+  /* --- bouncing orb (home page) --- */
+#orbCanvas{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0; /* behind text */
+  opacity: 0.9;
+}
+
+.status{
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(245,245,247,.55);
+}
+
+/* Remove green focus rectangle on name */
+.name:focus,
+.name:active {
+  outline: none;
+  box-shadow: none;
+}
