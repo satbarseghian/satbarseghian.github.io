@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sat Barseghyan</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
-
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <canvas id="orbCanvas" aria-hidden="true"></canvas>
   <div class="homeGlowCursor" id="homeGlowCursor" aria-hidden="true"></div>
+
   <main class="home">
     <div class="wrap homeWrap">
       <a class="name" href="projects.html">
@@ -19,137 +20,134 @@
 
       <p class="bio">
         I’m a senior at St. Olaf College studying Computer Science, with interests in data science, film, and UI/UX.
-        I build clean, story-driven work across software, data, and visuals. 
+        I build clean, story-driven work across software, data, and visuals.
       </p>
+
       <div class="hint">Click on my name to view selected projects.</div>
     </div>
   </main>
+
+  <!-- Cursor glow -->
   <script>
     const glow = document.getElementById("homeGlowCursor");
-  
-    function moveGlow(e){
+
+    function moveGlow(e) {
       glow.style.left = e.clientX + "px";
       glow.style.top  = e.clientY + "px";
       glow.style.opacity = "1";
     }
-  
+
     window.addEventListener("mousemove", moveGlow);
-  
-    // Optional: press Enter to go to projects
+
     window.addEventListener("keydown", (e) => {
       if (e.key === "Enter") window.location.href = "projects.html";
     });
-  
-    // Hide glow on touch devices
+
     if ("ontouchstart" in window) {
       glow.style.display = "none";
       window.removeEventListener("mousemove", moveGlow);
     }
-  </script>  
-  <script>
-    (() => {
-      const canvas = document.getElementById("orbCanvas");
-      const ctx = canvas.getContext("2d");
-    
-      // Respect reduced motion
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
-    
-      // HiDPI resize
-      function resize() {
-        const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
-        canvas.width = Math.floor(window.innerWidth * dpr);
-        canvas.height = Math.floor(window.innerHeight * dpr);
-        canvas.style.width = window.innerWidth + "px";
-        canvas.style.height = window.innerHeight + "px";
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      window.addEventListener("resize", resize);
-      resize();
-    
-      // Orb settings
-      const orb = {
-        r: 100,                 // radius (try 14–22)
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: 4.2,               // speed
-        vy: 3.2,
-        hue: 105,              // green-ish (try 50 for yellow, 200 for blue)
-        leaveChance: 0.004,    // chance per frame to "escape" offscreen
-        offscreen: false
-      };
-    
-      // When orb "leaves", we let it go offscreen then re-enter from a random edge
-      function forceExitAndReenter() {
-        if (orb.offscreen) return;
-        orb.offscreen = true;
-    
-        // push it toward a random direction to leave
-        const dir = Math.random() < 0.5 ? -1 : 1;
-        orb.vx = dir * (2.5 + Math.random() * 1.5);
-        orb.vy = (Math.random() - 0.5) * 3.2;
-    
-        // After it leaves, re-spawn from edge
-        setTimeout(() => {
-          const edge = Math.floor(Math.random() * 4);
-          const w = window.innerWidth, h = window.innerHeight;
-    
-          if (edge === 0) { orb.x = -orb.r - 10; orb.y = Math.random() * h; orb.vx = 2.6; orb.vy = (Math.random()-0.5)*2.2; } // left → right
-          if (edge === 1) { orb.x = w + orb.r + 10; orb.y = Math.random() * h; orb.vx = -2.6; orb.vy = (Math.random()-0.5)*2.2; } // right → left
-          if (edge === 2) { orb.x = Math.random() * w; orb.y = -orb.r - 10; orb.vy = 2.6; orb.vx = (Math.random()-0.5)*2.2; } // top → down
-          if (edge === 3) { orb.x = Math.random() * w; orb.y = h + orb.r + 10; orb.vy = -2.6; orb.vx = (Math.random()-0.5)*2.2; } // bottom → up
-    
-          orb.offscreen = false;
-        }, 900 + Math.random() * 800);
-      }
-    
-      function step() {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-    
-        // Clear
-        ctx.clearRect(0, 0, w, h);
-    
-        // Move
+  </script>
+<script>
+  (() => {
+    const canvas = document.getElementById("orbCanvas");
+    const ctx = canvas.getContext("2d");
+  
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+  
+    function resize() {
+      const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+  
+    const orb = {
+      r: 100,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() < 0.5 ? -1 : 1) * 5,
+      vy: -12,
+      hue: 105,
+      stopped: false
+    };
+  
+    function step() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+  
+      ctx.clearRect(0, 0, w, h);
+  
+      if (!orb.stopped) {
+  
+        const gravity = 0.65;
+        const air = 0.995;
+        const bounce = 0.85;  // lower = loses energy faster
+  
+        orb.vy += gravity;
+        orb.vx *= air;
+        orb.vy *= air;
+  
         orb.x += orb.vx;
         orb.y += orb.vy;
-    
-        // Bounce walls (when not intentionally offscreen)
-        if (!orb.offscreen) {
-          if (orb.x < orb.r) { orb.x = orb.r; orb.vx *= -1; }
-          if (orb.x > w - orb.r) { orb.x = w - orb.r; orb.vx *= -1; }
-          if (orb.y < orb.r) { orb.y = orb.r; orb.vy *= -1; }
-          if (orb.y > h - orb.r) { orb.y = h - orb.r; orb.vy *= -1; }
+  
+        // Side walls
+        if (orb.x + orb.r > w) {
+          orb.x = w - orb.r;
+          orb.vx = -Math.abs(orb.vx) * bounce;
         }
-    
-        // Occasionally "escape" the screen and come back
-        if (Math.random() < orb.leaveChance) forceExitAndReenter();
-    
-        // Draw orb with soft glow
-        // Outer glow
-       // Draw solid orb (no glow)
-        ctx.fillStyle = `hsla(${orb.hue}, 95%, 60%, 0.95)`;
-        ctx.beginPath();
-        ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Text inside orb
-        ctx.save();
-        ctx.font = "700 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "rgba(11,11,12,0.92)"; // dark text on bright orb
-        ctx.letterSpacing = "0px"; // harmless if unsupported
-        ctx.fillText("IN PROGRESS", orb.x, orb.y);
-        ctx.restore();
-
-    
-        requestAnimationFrame(step);
+        if (orb.x - orb.r < 0) {
+          orb.x = orb.r;
+          orb.vx = Math.abs(orb.vx) * bounce;
+        }
+  
+        // Ceiling
+        if (orb.y - orb.r < 0) {
+          orb.y = orb.r;
+          orb.vy = Math.abs(orb.vy) * bounce;
+        }
+  
+        // Floor
+        if (orb.y + orb.r > h) {
+          orb.y = h - orb.r;
+          orb.vy = -Math.abs(orb.vy) * bounce;
+  
+          // Slight horizontal randomness
+          orb.vx += (Math.random() - 0.5) * 0.5;
+  
+          // 🔥 NATURAL STOP CONDITION
+          if (Math.abs(orb.vy) < 0.4) {
+            orb.vy = 0;
+            orb.vx = 0;
+            orb.stopped = true;
+          }
+        }
       }
-    
+  
+      // Draw orb
+      ctx.fillStyle = `hsla(${orb.hue}, 95%, 60%, 0.95)`;
+      ctx.beginPath();
+      ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+      ctx.fill();
+  
+      ctx.save();
+      ctx.font = "700 16px system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(11,11,12,0.92)";
+      ctx.fillText("IN PROGRESS", orb.x, orb.y);
+      ctx.restore();
+  
       requestAnimationFrame(step);
-    })();
-    </script>
-    
+    }
+  
+    requestAnimationFrame(step);
+  })();
+  </script>
 </body>
 </html>
